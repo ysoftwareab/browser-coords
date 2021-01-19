@@ -15,20 +15,12 @@ name: CI
 jobs:
   main:
     timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        node:
-          - 10
-          - node
-    name: main-node-${{ matrix.node }}
+    name: main
     runs-on: ubuntu-latest
     container:
       image: rokmoln/sf-ubuntu-bionic-minimal:0.2.122
       options: '--user sf:sf'
       env:
-        GITHUB_JOB_NAME: main-node-${{ matrix.node }}
-        GITHUB_MATRIX_NODE: ${{ matrix.node }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SF_LOG_BOOTSTRAP: ${{ secrets.SF_LOG_BOOTSTRAP }}
         SF_PRINTENV_BOOTSTRAP: ${{ secrets.SF_PRINTENV_BOOTSTRAP }}
