@@ -132,5 +132,5 @@ so we added the ability to throttle all APIs.
 [Apache 2.0](LICENSE)
 
 
-  [1]: https://travis-ci.com/rokmoln/browser-coords
-  [2]: https://travis-ci.com/rokmoln/browser-coords.svg?branch=master
+  [1]: https://github.com/rokmoln/browser-coords/actions?query=workflow%3ACI+branch%3Amaster
+  [2]: https://github.com/rokmoln/browser-coords/workflows/CI/badge.svg?branch=master

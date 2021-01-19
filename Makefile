@@ -5,11 +5,12 @@ undefine INSTALL_SUPPORT_FIRECLOUD
 endif
 endif
 
-include support-firecloud/repo/mk/node.common.mk
-include support-firecloud/repo/mk/js.build.dts.mk
-include support-firecloud/repo/mk/js.check.eslint.mk
-include support-firecloud/repo/mk/js.check.tsc.mk
-include support-firecloud/repo/mk/core.misc.release.npg.mk
+include support-firecloud/build.mk/generic.common.mk
+include support-firecloud/build.mk/node.common.mk
+include support-firecloud/build.mk/js.build.dts.mk
+include support-firecloud/build.mk/js.check.eslint.mk
+include support-firecloud/build.mk/js.check.tsc.mk
+include support-firecloud/build.mk/core.misc.release.npg.mk
 
 # ------------------------------------------------------------------------------
 
@@ -23,6 +24,10 @@ SF_BUILD_TARGETS += \
 	docs/demo.browserify.js \
 
 # ------------------------------------------------------------------------------
+
+.github/workflows/main.yml: .github/workflows/main.yml.tpl .github/workflows.src/main.yml support-firecloud/package.json
+	$(call sf-generate-from-template)
+
 
 docs/%.browserify.js: docs/%.js
 	$(BROWSERIFY) $< -o $@

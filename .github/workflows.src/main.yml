@@ -1,0 +1,76 @@
+name: CI
+on:
+  push:
+    branches:
+      - github* # github branches
+      - master
+    tags:
+      - 'v*' # version tags
+  pull_request:
+    branches:
+      - '**'
+  schedule:
+    - cron:  '0 0 * * *'
+
+aliases:
+  env: &env
+
+# ------------------------------------------------------------------------------
+
+jobs:
+  main:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 10
+          - node
+    name: main-node-${{ matrix.node }}
+    runs-on: ubuntu-latest
+    container:
+      image: rokmoln/sf-ubuntu-bionic-minimal:${ENVSUBST_SF_VSN}
+      options: '--user sf:sf'
+      env:
+        GITHUB_JOB_NAME: main-node-${{ matrix.node }}
+        GITHUB_MATRIX_NODE: ${{ matrix.node }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SF_LOG_BOOTSTRAP: ${{ secrets.SF_LOG_BOOTSTRAP }}
+        SF_PRINTENV_BOOTSTRAP: ${{ secrets.SF_PRINTENV_BOOTSTRAP }}
+        V: ${{ secrets.V }}
+    steps:
+      - shell: bash
+        run: sudo chown sf:sf . # owned by 1001:116 otherwise
+
+      - uses: actions/checkout@v2
+
+      - shell: bash
+        run: ./.ci.sh before_install
+
+      - shell: bash
+        run: ./.ci.sh install
+
+      - shell: bash
+        run: ./.ci.sh before_script
+
+      - shell: bash
+        run: ./.ci.sh script
+
+      - if: failure()
+        shell: bash
+        run: ./.ci.sh after_failure || true
+
+      - shell: bash
+        run: ./.ci.sh after_success || true
+
+      - if: always()
+        shell: bash
+        run: ./.ci.sh after_script || true
+
+      - if: always()
+        shell: bash
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: cloud-ci
+          CI_STATUS: ${{ job.status }}
+        run: ./.ci.sh notifications || true
