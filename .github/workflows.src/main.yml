@@ -31,10 +31,11 @@ jobs:
         SF_PRINTENV_BOOTSTRAP: ${{ secrets.SF_PRINTENV_BOOTSTRAP }}
         V: ${{ secrets.V }}
     steps:
-      - shell: bash
-        run: sudo chown sf:sf . # owned by 1001:116 otherwise
-
-      - uses: actions/checkout@v2
+      - uses: rokmoln/support-firecloud@v${ENVSUBST_SF_VSN}
+        with:
+          run: |
+            sudo chown sf:sf ${GITHUB_WORKSPACE} # owned by 1001:116 otherwise
+            bin/github-checkout
 
       - shell: bash
         run: ./.ci.sh before_install

@@ -18,17 +18,19 @@ jobs:
     name: main
     runs-on: ubuntu-latest
     container:
-      image: rokmoln/sf-ubuntu-bionic-minimal:0.2.122
+      image: 'rokmoln/sf-ubuntu-bionic-minimal:0.2.128'
       options: '--user sf:sf'
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SF_LOG_BOOTSTRAP: ${{ secrets.SF_LOG_BOOTSTRAP }}
-        SF_PRINTENV_BOOTSTRAP: ${{ secrets.SF_PRINTENV_BOOTSTRAP }}
-        V: ${{ secrets.V }}
+        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        SF_LOG_BOOTSTRAP: '${{ secrets.SF_LOG_BOOTSTRAP }}'
+        SF_PRINTENV_BOOTSTRAP: '${{ secrets.SF_PRINTENV_BOOTSTRAP }}'
+        V: '${{ secrets.V }}'
     steps:
-      - shell: bash
-        run: sudo chown sf:sf .
-      - uses: actions/checkout@v2
+      - uses: rokmoln/support-firecloud@v0.2.128
+        with:
+          run: |
+            sudo chown sf:sf ${GITHUB_WORKSPACE} # owned by 1001:116 otherwise
+            bin/github-checkout
       - shell: bash
         run: ./.ci.sh before_install
       - shell: bash
@@ -48,7 +50,7 @@ jobs:
       - if: always()
         shell: bash
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK: '${{ secrets.SLACK_WEBHOOK }}'
           SLACK_CHANNEL: cloud-ci
-          CI_STATUS: ${{ job.status }}
+          CI_STATUS: '${{ job.status }}'
         run: ./.ci.sh notifications || true
