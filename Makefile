@@ -19,6 +19,9 @@ BROWSERIFY = $(call npm-which,BROWSERIFY,browserify)
 SF_VENDOR_FILES_IGNORE += \
 	-e "^docs/.\+\.browserify\.js$$" \
 
+SF_DEPS_TARGETS += \
+	.github/workflows/main.yml \
+
 SF_BUILD_TARGETS += \
 	docs/play.browserify.js \
 	docs/demo.browserify.js \
